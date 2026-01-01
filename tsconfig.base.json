@@ -8,6 +8,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "target": "es2015",
     "module": "esnext",
     "lib": ["es2020", "dom"],
@@ -15,7 +17,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ninjavault/shared-ui": ["libs/shared-ui/src/index.ts"]
+      "@ninjavault/shared-ui": ["libs/shared-ui/src/index.ts"],
+      "@ninjavault/users": ["libs/users/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

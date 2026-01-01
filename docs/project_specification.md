@@ -1,12 +1,12 @@
-# Project Specification: NinjaVault Learning & Blog Platform
+# Project Specification: NinjaVault Learning & Blogs Platform
 
 ## 1. Executive Summary
-NinjaVault is a hybrid platform combining a professional blog with an interactive learning environment. It aims to provide high-quality educational content, including videos, code demonstrations, and hands-on interactive coding sessions. The platform will support a community of contributors and a subscription-based monetization model.
+NinjaVault is a hybrid platform combining professional blogs with an interactive learning environment. It aims to provide high-quality educational content, including videos, code demonstrations, and hands-on interactive coding sessions. The platform will support a community of contributors and a subscription-based monetization model.
 
 ## 2. Key Features
 
 ### 2.1. Content Management
-*   **Multimedia Blog:** Support for text, images, and embedded video hosting.
+*   **Multimedia Blogs:** Support for text, images, and embedded video hosting.
 *   **Video Hosting:** Integration with services like Mux or AWS Elemental for high-performance video streaming and management.
 *   **Code Previews:** Syntax-highlighted code blocks for various programming languages.
 
@@ -27,7 +27,7 @@ NinjaVault is a hybrid platform combining a professional blog with an interactiv
 
 | Component | Recommendation | Reason |
 | :--- | :--- | :--- |
-| **Frontend Framework** | Next.js (React) | Excellent SEO for the blog, server-side rendering, and robust ecosystem. |
+| **Frontend Framework** | Next.js (React) | Excellent SEO for the blogs, server-side rendering, and robust ecosystem. |
 | **Styling** | Tailwind CSS | Rapid UI development and consistent design system. |
 | **Interactive Editor** | Monaco Editor / Sandpack | Industry standard for web-based code editing. |
 | **Backend** | Node.js (TypeScript) / Next.js API Routes | Uniformity across the stack; easy scaling. |
@@ -42,7 +42,7 @@ NinjaVault is a hybrid platform combining a professional blog with an interactiv
 ### Phase 1: Foundation (Weeks 1-4)
 *   Set up project repository and CI/CD pipelines.
 *   Implement authentication and basic RBAC.
-*   Develop basic blog layout and CMS integration (e.g., Sanity.io or Strapi).
+*   Develop basic blogs layout and CMS integration (e.g., Sanity.io or Strapi).
 
 ### Phase 2: Content & Video (Weeks 5-8)
 *   Integrate video hosting and playback.
