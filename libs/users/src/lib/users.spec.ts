@@ -23,6 +23,7 @@ describe('users', () => {
     const user = await createUser(email, password, name);
     expect(user.email).toBe(email);
     expect(user.name).toBe(name);
+    expect(user.roles).toEqual(['student']);
     expect(user.passwordHash).toBeDefined();
     expect(user.passwordHash).not.toBe(password);
 

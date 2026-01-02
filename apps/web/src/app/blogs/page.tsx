@@ -15,49 +15,62 @@ import {
   Chip,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
-const MOCK_BLOGS = [
-  { id: 1, title: 'My Ninja Journey', author: 'Jeff', description: 'The beginning of NinjaVault and my personal journey in tech.', category: 'Personal', date: '2025-12-01' },
-  { id: 2, title: 'Mastering React 19', author: 'Alice', description: 'Deep dive into the latest React features and hooks.', category: 'Tech', date: '2025-12-15' },
-  { id: 3, title: 'Next.js vs Remix in 2026', author: 'Bob', description: 'Choosing the right framework for your next big project.', category: 'Tech', date: '2025-12-20' },
-  { id: 4, title: 'Tailwind CSS Best Practices', author: 'Charlie', description: 'How to write clean and maintainable Tailwind CSS code.', category: 'Design', date: '2025-12-25' },
-  { id: 5, title: 'Optimizing PostgreSQL Queries', author: 'Dana', description: 'Tips and tricks for making your database lightning fast.', category: 'Backend', date: '2025-12-28' },
-  { id: 6, title: 'AI Integration Strategies', author: 'Eve', description: 'How to effectively integrate LLMs into your web applications.', category: 'AI', date: '2025-12-30' },
-  { id: 7, title: 'TypeScript 5.x Features', author: 'Frank', description: 'Exploring the newest additions to TypeScript.', category: 'Tech', date: '2026-01-01' },
-];
+import AddIcon from '@mui/icons-material/Add';
+import NextLink from 'next/link';
+import { useAuth } from '../../components/AuthContext';
+import { Blog } from '@ninjavault/blogs';
 
 export default function BlogsPage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [shuffledBlogs, setShuffledBlogs] = useState(MOCK_BLOGS.slice(1));
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Shuffle blogs excluding the fixed one (ID 1)
-    const otherBlogs = [...MOCK_BLOGS].filter(blog => blog.id !== 1);
-    for (let i = otherBlogs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [otherBlogs[i], otherBlogs[j]] = [otherBlogs[j], otherBlogs[i]];
-    }
-    setShuffledBlogs(otherBlogs);
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch('/api/blogs');
+        if (response.ok) {
+          const data = await response.json();
+          setBlogs(data);
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
   }, []);
 
-  const fixedBlog = MOCK_BLOGS.find(blog => blog.id === 1);
-
   const filteredBlogs = useMemo(() => {
-    const allBlogs = fixedBlog ? [fixedBlog, ...shuffledBlogs] : shuffledBlogs;
-    const filtered = allBlogs.filter(blog =>
+    return blogs.filter(blog =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.authorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    return filtered;
-  }, [searchTerm, shuffledBlogs, fixedBlog]);
+  }, [searchTerm, blogs]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-        Blogs
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+        <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold' }}>
+          Blogs
+        </Typography>
+        {user && (
+          <Button
+            component={NextLink}
+            href="/blogs/create"
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{ mt: 1 }}
+          >
+            Create Blog
+          </Button>
+        )}
+      </Box>
       <Typography variant="h5" color="text.secondary" paragraph>
         Insights, tutorials, and stories from the NinjaVault community.
       </Typography>
@@ -79,7 +92,13 @@ export default function BlogsPage() {
         />
       </Box>
 
-      {filteredBlogs.length > 0 ? (
+      {loading ? (
+        <Box sx={{ textAlign: 'center', py: 10 }}>
+          <Typography variant="h6" color="text.secondary">
+            Loading blogs...
+          </Typography>
+        </Box>
+      ) : filteredBlogs.length > 0 ? (
         <Grid container spacing={4}>
           {filteredBlogs.map((blog) => (
             <Grid key={blog.id} size={{ xs: 12, sm: 6, md: 4 }}>
@@ -88,8 +107,8 @@ export default function BlogsPage() {
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  border: blog.id === 1 ? '2px solid' : '1px solid',
-                  borderColor: blog.id === 1 ? 'primary.main' : 'divider',
+                  border: blog.id === '1' ? '2px solid' : '1px solid',
+                  borderColor: blog.id === '1' ? 'primary.main' : 'divider',
                   position: 'relative',
                   transition: 'transform 0.2s, box-shadow 0.2s',
                   '&:hover': {
@@ -98,7 +117,7 @@ export default function BlogsPage() {
                   },
                 }}
               >
-                {blog.id === 1 && (
+                {blog.id === '1' && (
                   <Chip
                     label="Featured"
                     color="primary"
@@ -108,7 +127,7 @@ export default function BlogsPage() {
                 )}
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="overline" color="text.secondary">
-                    {blog.category} • {blog.date}
+                    {blog.category} • {new Date(blog.createdAt).toLocaleDateString()}
                   </Typography>
                   <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', mt: 1 }}>
                     {blog.title}
@@ -117,7 +136,7 @@ export default function BlogsPage() {
                     {blog.description}
                   </Typography>
                   <Typography variant="subtitle2" color="text.primary">
-                    By {blog.author}
+                    By {blog.authorName}
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ p: 2, pt: 0 }}>

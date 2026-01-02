@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../components/AuthContext';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +44,10 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Something went wrong');
       }
 
+      login(data.user);
       setSuccess(true);
       setTimeout(() => {
-        router.push('/login');
+        router.push('/');
       }, 2000);
     } catch (err: any) {
       setError(err.message);
@@ -65,7 +68,7 @@ export default function RegisterPage() {
           )}
           {success && (
             <Alert severity="success" sx={{ mb: 2 }}>
-              Registration successful! Redirecting to login...
+              Registration successful! Redirecting...
             </Alert>
           )}
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

@@ -18,7 +18,9 @@
     "baseUrl": ".",
     "paths": {
       "@ninjavault/shared-ui": ["libs/shared-ui/src/index.ts"],
-      "@ninjavault/users": ["libs/users/src/index.ts"]
+      "@ninjavault/users": ["libs/users/src/index.ts"],
+      "@ninjavault/users/types": ["libs/users/src/lib/types.ts"],
+      "@ninjavault/blogs": ["libs/blogs/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

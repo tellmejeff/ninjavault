@@ -1,12 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import bcrypt from 'bcryptjs';
+import { UserRole, Privilege, ROLE_PRIVILEGES, getUserPrivileges, hasPrivilege } from './types';
 
 export interface User {
   id: string;
   email: string;
   passwordHash: string;
   name?: string;
+  roles: UserRole[];
 }
 
 const DB_PATH = path.join(process.cwd(), 'data', 'users.json');
@@ -37,7 +39,7 @@ export async function saveUsers(users: User[]): Promise<void> {
   await fs.writeFile(DB_PATH, JSON.stringify(users, null, 2));
 }
 
-export async function createUser(email: string, password: string, name?: string): Promise<User> {
+export async function createUser(email: string, password: string, name?: string, roles: UserRole[] = ['student']): Promise<User> {
   const users = await getUsers();
   if (users.find((u) => u.email === email)) {
     throw new Error('User already exists');
@@ -49,6 +51,7 @@ export async function createUser(email: string, password: string, name?: string)
     email,
     passwordHash,
     name,
+    roles,
   };
 
   users.push(newUser);
@@ -59,6 +62,44 @@ export async function createUser(email: string, password: string, name?: string)
 export async function findUserByEmail(email: string): Promise<User | undefined> {
   const users = await getUsers();
   return users.find((u) => u.email === email);
+}
+
+export async function findUserById(id: string): Promise<User | undefined> {
+  const users = await getUsers();
+  return users.find((u) => u.id === id);
+}
+
+export async function updateUser(id: string, updates: Partial<Omit<User, 'id' | 'passwordHash'>> & { password?: string }): Promise<User> {
+  const users = await getUsers();
+  const userIndex = users.findIndex((u) => u.id === id);
+  if (userIndex === -1) {
+    throw new Error('User not found');
+  }
+
+  const user = users[userIndex];
+
+  if (updates.email && updates.email !== user.email) {
+    if (users.find((u) => u.email === updates.email)) {
+      throw new Error('Email already in use');
+    }
+    user.email = updates.email;
+  }
+
+  if (updates.name !== undefined) {
+    user.name = updates.name;
+  }
+
+  if (updates.roles !== undefined) {
+    user.roles = updates.roles;
+  }
+
+  if (updates.password) {
+    user.passwordHash = await bcrypt.hash(updates.password, 10);
+  }
+
+  users[userIndex] = user;
+  await saveUsers(users);
+  return user;
 }
 
 export async function verifyUser(email: string, password: string): Promise<User | null> {

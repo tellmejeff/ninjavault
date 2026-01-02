@@ -1,7 +1,10 @@
 [
   {
-    "id": "1767295307791",
+    "id": "1767394979681",
     "email": "dup@example.com",
-    "passwordHash": "$2b$10$F15oIijpQaGyF4KdHI90x.DI0a5bxG0g1fqfTcGqs1zOuWifE3y9G"
+    "passwordHash": "$2b$10$rRWZCj7UKQC6DKUL3ZRxG.0tYH6ucAF/hAr8ddgPRzueZbyRg/0o6",
+    "roles": [
+      "student"
+    ]
   }
 ]

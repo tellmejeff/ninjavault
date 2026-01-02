@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../components/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,8 +43,8 @@ export default function LoginPage() {
         throw new Error(data.error || 'Something went wrong');
       }
 
+      login(data.user);
       setSuccess(true);
-      // In a real app, you'd set a session/cookie here
       setTimeout(() => {
         router.push('/');
       }, 1000);

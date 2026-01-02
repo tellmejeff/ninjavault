@@ -1,2 +1,2 @@
-export * from './lib/users';
+export * from './lib/blogs';
 export * from './lib/types';

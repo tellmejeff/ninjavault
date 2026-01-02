@@ -1,15 +1,35 @@
 'use client';
 
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Link, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Link, IconButton, Menu, MenuItem } from '@mui/material';
 import NextLink from 'next/link';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useColorMode } from './ThemeContext';
+import { useAuth } from './AuthContext';
 import ninjaIcon from '../images/ninja-vault-icon.svg';
 
 const Navbar = () => {
   const { mode, toggleColorMode } = useColorMode();
+  const { user, logout } = useAuth();
+  const isAdmin = user?.roles?.includes('admin');
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleMenuClose();
+    logout();
+  };
 
   return (
     <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
@@ -45,7 +65,7 @@ const Navbar = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ flexGrow: 1, display: 'flex', gap: 2 }}>
+        <Box sx={{ flexGrow: 1, display: 'flex', gap: 2, alignItems: 'center' }}>
           <Link component={NextLink} href="/blogs" color="inherit" underline="none">
             Blogs
           </Link>
@@ -55,18 +75,58 @@ const Navbar = () => {
           <Link component={NextLink} href="/community" color="inherit" underline="none">
             Community
           </Link>
+          {isAdmin && (
+            <Link component={NextLink} href="/admin/users" color="primary" underline="none" sx={{ fontWeight: 'bold' }}>
+              Admin
+            </Link>
+          )}
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <IconButton onClick={toggleColorMode} color="inherit" sx={{ mr: 1 }}>
             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          <Button component={NextLink} href="/login" color="inherit">
-            Login
-          </Button>
-          <Button component={NextLink} href="/register" variant="contained" color="primary">
-            Sign Up
-          </Button>
+          {user ? (
+            <>
+              <Button
+                color="inherit"
+                onClick={handleMenuOpen}
+                endIcon={<KeyboardArrowDownIcon />}
+                sx={{ textTransform: 'none', fontWeight: 'medium' }}
+              >
+                {user.name || user.email}
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem onClick={handleMenuClose} component={NextLink} href="/account">
+                  My Account
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  Signout
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Button component={NextLink} href="/login" color="inherit">
+                Login
+              </Button>
+              <Button component={NextLink} href="/register" variant="contained" color="primary">
+                Sign Up
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

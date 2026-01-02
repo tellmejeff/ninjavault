@@ -3,6 +3,10 @@
     "id": "1767295582949",
     "email": "jeffrey.poore@gmail.com",
     "passwordHash": "$2b$10$MqhWzfxy2SNWCy543xxDW.ZgDaxTdnrbWbmewvH8ndwG13Ate7Ud6",
-    "name": "Jeffrey Poore"
+    "name": "Jeffrey Poore",
+    "roles": [
+      "editor",
+      "admin"
+    ]
   }
 ]

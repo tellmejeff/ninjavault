@@ -1,5 +1,6 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeClientProvider } from '../components/ThemeContext';
+import { AuthProvider } from '../components/AuthContext';
 import './global.css';
 import Navbar from '../components/Navbar';
 
@@ -36,8 +37,10 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeClientProvider>
-            <Navbar />
-            {children}
+            <AuthProvider>
+              <Navbar />
+              {children}
+            </AuthProvider>
           </ThemeClientProvider>
         </AppRouterCacheProvider>
       </body>
